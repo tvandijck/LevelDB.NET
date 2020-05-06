@@ -30,23 +30,23 @@ namespace LevelDB.NET
             Largest = largest;
         }
 
-        public bool ContainsKey(byte[] key)
+        public bool ContainsKey(byte[] key, IComparer<byte[]> comparer)
         {
-            if (m_indexBlock != null && m_indexBlock.BinarySearch(key, out var handle))
+            if (m_indexBlock != null && m_indexBlock.BinarySearch(key, comparer, out var handle))
             {
                 var block = GetBlock(handle);
-                return block.ContainsKey(key);
+                return block.ContainsKey(key, comparer);
             }
 
             return false;
         }
 
-        public bool TryGetValue(byte[] key, out byte[]? value)
+        public bool TryGetValue(byte[] key, IComparer<byte[]> comparer, out byte[]? value)
         {
-            if (m_indexBlock != null && m_indexBlock.BinarySearch(key, out var handle))
+            if (m_indexBlock != null && m_indexBlock.BinarySearch(key, comparer, out var handle))
             {
                 var block = GetBlock(handle);
-                return block.TryGetValue(key, out value);
+                return block.TryGetValue(key, comparer, out value);
             }
 
             value = null;
@@ -58,13 +58,13 @@ namespace LevelDB.NET
             if (m_stream != null)
             {
                 var handle = BlockHandle.DecodeFrom(new Slice(key));
-                if (m_blockCache.TryGetValue(handle, out var block))
+                if (m_blockCache != null && m_blockCache.TryGetValue(handle, out var block))
                 {
                     return block;
                 }
 
                 block = ReadBlock(m_stream, handle);
-                m_blockCache.Add(handle, block);
+                m_blockCache?.Add(handle, block);
                 return block;
             }
             throw new Exception("TableFile not open");

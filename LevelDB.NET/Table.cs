@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -14,16 +13,35 @@ namespace LevelDB.NET
         private readonly VersionSet m_versionSet;
         private readonly string m_path;
         private readonly LruCache<BlockHandle, Block> m_sharedCache = new LruCache<BlockHandle, Block>(16);
+        private IComparer<byte[]> m_comparer = new BytewiseComparator();
 
         private Table(string path, VersionSet versionSet)
         {
             m_versionSet = versionSet;
             m_path = path;
+
+            if (m_versionSet.HasComparator)
+            {
+                if (m_versionSet.Comparator == "leveldb.BytewiseComparator")
+                { 
+                    m_comparer = new BytewiseComparator();
+                }
+                else
+                { 
+                    throw new Exception("Not supported yet");
+                }
+            }
         }
 
         public void Dispose()
         {
             m_versionSet.Dispose();
+        }
+
+        public IComparer<byte[]> Comparator
+        {
+            get { return m_comparer; }
+            set { m_comparer = value; }
         }
 
         public IEnumerable<byte[]> Keys
@@ -60,7 +78,7 @@ namespace LevelDB.NET
             if (TryFindFile(key, out var file))
             {
                 file.AssureOpen(m_path, m_sharedCache);
-                return file.TryGetValue(key, out value);
+                return file.TryGetValue(key, m_comparer, out value);
             }
 
             value = null;
@@ -72,8 +90,8 @@ namespace LevelDB.NET
             // This could probably be a binary seach, but I'm too lazy.
             foreach (var f in m_versionSet.Files)
             {
-                if (BytewiseComparator.compare(key, f.Smallest.UserKey) >= 0 &&
-                    BytewiseComparator.compare(key, f.Largest.UserKey) <= 0)
+                if (m_comparer.Compare(key, f.Smallest.UserKey) >= 0 &&
+                    m_comparer.Compare(key, f.Largest.UserKey) <= 0)
                 {
                     file = f;
                     return true;
@@ -127,7 +145,7 @@ namespace LevelDB.NET
             if (TryFindFile(key, out var file))
             {
                 file.AssureOpen(m_path, m_sharedCache);
-                return file.ContainsKey(key);
+                return file.ContainsKey(key, m_comparer);
             }
 
             return false;

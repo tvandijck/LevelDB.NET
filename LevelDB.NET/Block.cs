@@ -9,7 +9,6 @@ namespace LevelDB.NET
     {
         private readonly List<byte[]> m_keys = new List<byte[]>();
         private readonly List<byte[]> m_values = new List<byte[]>();
-        private static readonly IComparer<byte[]> s_comparer = new BytewiseComparator();
 
         public Block(Slice data)
         {
@@ -68,9 +67,9 @@ namespace LevelDB.NET
             }
         }
 
-        public bool BinarySearch(byte[] key, [NotNullWhen(true)] out byte[]? value)
+        public bool BinarySearch(byte[] key, IComparer<byte[]> comparer, [NotNullWhen(true)] out byte[]? value)
         {
-            int idx = m_keys.BinarySearch(key, s_comparer);
+            int idx = m_keys.BinarySearch(key, comparer);
             if (idx >= 0)
             {
                 value = m_values[idx];
@@ -88,9 +87,9 @@ namespace LevelDB.NET
             return false;
         }
 
-        public bool TryGetValue(byte[] key, [NotNullWhen(true)] out byte[]? value)
+        public bool TryGetValue(byte[] key, IComparer<byte[]> comparer, [NotNullWhen(true)] out byte[]? value)
         {
-            int idx = m_keys.BinarySearch(key, s_comparer);
+            int idx = m_keys.BinarySearch(key, comparer);
             if (idx >= 0)
             {
                 value = m_values[idx];
@@ -101,9 +100,9 @@ namespace LevelDB.NET
             return false;
         }
 
-        public bool ContainsKey(byte[] key)
+        public bool ContainsKey(byte[] key, IComparer<byte[]> comparer)
         {
-            return m_keys.BinarySearch(key, s_comparer) >= 0;
+            return m_keys.BinarySearch(key, comparer) >= 0;
         }
 
         private static Slice? DecodeEntry(Slice p, out uint shared, out uint non_shared, out uint value_length)
