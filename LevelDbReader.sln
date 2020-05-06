@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelDbReader", "LevelDbReader\LevelDbReader.csproj", "{A75CF6A1-9A90-41C7-8D75-BA09B44ACEEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelDB.NET", "LevelDB.NET\LevelDB.NET.csproj", "{44458EA4-D369-41F9-BE13-9B87D8654D53}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A75CF6A1-9A90-41C7-8D75-BA09B44ACEEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A75CF6A1-9A90-41C7-8D75-BA09B44ACEEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A75CF6A1-9A90-41C7-8D75-BA09B44ACEEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A75CF6A1-9A90-41C7-8D75-BA09B44ACEEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44458EA4-D369-41F9-BE13-9B87D8654D53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44458EA4-D369-41F9-BE13-9B87D8654D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44458EA4-D369-41F9-BE13-9B87D8654D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44458EA4-D369-41F9-BE13-9B87D8654D53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E94ABEE3-BCA3-468E-9DF1-0B9A56120EF8}
+	EndGlobalSection
+EndGlobal
