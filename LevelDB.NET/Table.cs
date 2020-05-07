@@ -8,6 +8,8 @@ using System.Linq;
 
 namespace LevelDB.NET
 {
+
+
     public partial class Table : IDisposable, IReadOnlyDictionary<byte[], byte[]>
     {
         private readonly VersionSet m_versionSet;
@@ -29,6 +31,21 @@ namespace LevelDB.NET
                 else
                 { 
                     throw new Exception("Not supported yet");
+                }
+            }
+        }
+
+        public IEnumerable<KeyValuePair<byte[], byte[]>> Filter(IFilter filter)
+        {
+            foreach (var file in m_versionSet.Files)
+            {
+                if (filter.Compare(file.Smallest.UserKey) >= 0 && filter.Compare(file.Largest.UserKey) <= 0)
+                {
+                    file.AssureOpen(m_path, m_sharedCache);
+                    foreach (var item in file.Filter(filter))
+                    {
+                        yield return item;
+                    }
                 }
             }
         }

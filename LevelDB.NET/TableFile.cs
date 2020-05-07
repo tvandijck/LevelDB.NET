@@ -53,6 +53,21 @@ namespace LevelDB.NET
             return false;
         }
 
+        public IEnumerable<KeyValuePair<byte[], byte[]>> Filter(IFilter filter)
+        {
+            if (m_indexBlock != null)
+            {
+                foreach (var indexItem in m_indexBlock.Filter(filter, Largest.UserKey))
+                {
+                    var block = GetBlock(indexItem.Value);
+                    foreach (var item in block.Match(filter))
+                    {
+                        yield return item;
+                    }
+                }
+            }
+        }
+
         private Block GetBlock(byte[] key)
         {
             if (m_stream != null)

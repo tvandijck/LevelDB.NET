@@ -100,6 +100,29 @@ namespace LevelDB.NET
             return false;
         }
 
+        public IEnumerable<KeyValuePair<byte[], byte[]>> Filter(IFilter filter, byte[] largest)
+        {
+            int count = m_keys.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                if (filter.Compare(m_keys[i]) <= 0)
+                {
+                    yield return new KeyValuePair<byte[], byte[]>(m_keys[i], m_values[i]);
+                }
+            }
+        }
+
+        public IEnumerable<KeyValuePair<byte[], byte[]>> Match(IFilter filter)
+        {
+            for (int i = 0; i < m_keys.Count; ++i)
+            {
+                if (filter.Compare(m_keys[i]) == 0)
+                {
+                    yield return new KeyValuePair<byte[], byte[]>(m_keys[i], m_values[i]);
+                }
+            }
+        }
+
         public bool ContainsKey(byte[] key, IComparer<byte[]> comparer)
         {
             return m_keys.BinarySearch(key, comparer) >= 0;
